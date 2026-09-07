@@ -41,9 +41,10 @@ class Game:
 		music.set_volume(0.2)
 		music.play(loops = -1)
 		self.laser_sound = pygame.mixer.Sound('../audio/laser.wav')
-		self.laser_sound.set_volume(0.5)
+		self.laser_sound.set_volume(0.1)
 		self.explosion_sound = pygame.mixer.Sound('../audio/explosion.wav')
 		self.explosion_sound.set_volume(0.3)
+		self.damage_sound = pygame.mixer.Sound("../audio/damage.wav")
 
 	def create_obstacle(self, x_start, y_start,offset_x):
 		for row_index, row in enumerate(self.shape):
@@ -105,7 +106,6 @@ class Game:
 				# obstacle collisions
 				if pygame.sprite.spritecollide(laser,self.blocks,True):
 					laser.kill()
-					
 
 				# alien collisions
 				aliens_hit = pygame.sprite.spritecollide(laser,self.aliens,True)
@@ -127,7 +127,9 @@ class Game:
 				if pygame.sprite.spritecollide(laser,self.blocks,True):
 					laser.kill()
 
+				# player collisions
 				if pygame.sprite.spritecollide(laser,self.player,False):
+					self.damage_sound.play()
 					laser.kill()
 					self.lives -= 1
 					if self.lives <= 0:
@@ -202,6 +204,7 @@ if __name__ == '__main__':
 	screen_height = 600
 	screen = pygame.display.set_mode((screen_width,screen_height))
 	clock = pygame.time.Clock()
+	pygame.mouse.set_visible(False)
 	game = Game()
 	crt = CRT()
 
@@ -210,6 +213,9 @@ if __name__ == '__main__':
 
 	while True:
 		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				pygame.quit()
+				sys.exit()
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
