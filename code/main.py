@@ -48,6 +48,7 @@ class Game:
 
 		# UI setup
 		self.paused = False
+		self.game_over = False
 
 	def create_obstacle(self, x_start, y_start,offset_x):
 		for row_index, row in enumerate(self.shape):
@@ -120,6 +121,7 @@ class Game:
 
 				# extra collision
 				if pygame.sprite.spritecollide(laser,self.extra,True):
+					self.explosion_sound.play()
 					self.score += 500
 					laser.kill()
 
@@ -136,8 +138,8 @@ class Game:
 					laser.kill()
 					self.lives -= 1
 					if self.lives <= 0:
-						pygame.quit()
-						sys.exit()
+						self.game_over = True
+						game.music.stop()
 
 		# aliens
 		if self.aliens:
@@ -173,6 +175,19 @@ class Game:
 		resume_surf = self.font.render("Press Enter to resume",False,"white")
 		resume_rect = resume_surf.get_rect(center = (screen_width/2,screen_height/2 + 30))
 		screen.blit(resume_surf,resume_rect)
+
+		quit_surf = self.font.render("Press Esc to quit",False,"white")
+		quit_rect = quit_surf.get_rect(center = (screen_width/2,screen_height/2 + 90))
+		screen.blit(quit_surf,quit_rect)
+
+	def game_over_menu(self):
+		game_over_surf = self.font.render("GAME OVER",False,"white")
+		game_over_rect = game_over_surf.get_rect(center = (screen_width/2,screen_height/2 - 30))
+		screen.blit(game_over_surf,game_over_rect)
+
+		restart_surf = self.font.render("Press Enter to restart",False,"white")
+		restart_rect = restart_surf.get_rect(center = (screen_width/2,screen_height/2 + 30))
+		screen.blit(restart_surf,restart_rect)
 
 		quit_surf = self.font.render("Press Esc to quit",False,"white")
 		quit_rect = quit_surf.get_rect(center = (screen_width/2,screen_height/2 + 90))
@@ -238,18 +253,28 @@ if __name__ == '__main__':
 				pygame.quit()
 				sys.exit()
 
-			if event.type == ALIENLASER and not game.paused:
+			if event.type == ALIENLASER and not game.paused and not game.game_over:
 				game.alien_shoot()
 
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-				game.paused = not game.paused
-
-				if game.paused: game.music.stop()
-				else: game.music.play(loops = -1)
+				if game.game_over:
+					game = Game()
+				elif game.paused:
+					game.paused = False
+					game.music.play()
+				else:
+					game.paused = True
+					game.music.stop()
 
 		screen.fill((30,30,30))
-		if not game.paused: game.run()
-		else: game.pause_menu()
+
+		if game.game_over:
+			game.game_over_menu()
+		elif game.paused:
+			game.pause_menu()
+		else: 
+			game.run()
+
 		crt.draw()
 			
 		pygame.display.flip()
