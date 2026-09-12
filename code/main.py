@@ -236,9 +236,11 @@ class CRT:
 			pygame.draw.line(self.tv,'black',(0,y_pos),(screen_width,y_pos),1)
 
 	def draw(self):
-		self.tv.set_alpha(randint(75,90))
+		alpha = randint(75,90)
+		self.tv.set_alpha(alpha)
 		self.create_crt_lines()
 		screen.blit(self.tv,(0,0))
+		return alpha
 
 if __name__ == '__main__':
 	pygame.init()
@@ -248,6 +250,7 @@ if __name__ == '__main__':
 	display_width = 1280
 	display_height = 720
 	display = pygame.display.set_mode((display_width,display_height),pygame.NOFRAME)
+	overlay = pygame.Surface((1280,720),pygame.SRCALPHA)
 	clock = pygame.time.Clock()
 	pygame.mouse.set_visible(False)
 	game = Game()
@@ -297,11 +300,20 @@ if __name__ == '__main__':
 		else: 
 			game.run()
 
-		crt.draw()
+		alpha = crt.draw()
 
 		scaled_screen = pygame.transform.scale(screen,(720,720))
 		display.fill((57, 255, 143))
 		display.blit(scaled_screen,(280,0))
+
+		overlay.fill((0, 0, 0, 0))
+
+		line_height = 3
+		for y in range(0, display_height, line_height):
+			pygame.draw.line(overlay, (0,0,0,alpha), (0,y), (280,y), 1)
+			pygame.draw.line(overlay, (0,0,0,alpha), (1000,y), (display_width,y), 1)
+
+		display.blit(overlay,(0,0))
 
 		pygame.display.flip()
 		clock.tick(60)
