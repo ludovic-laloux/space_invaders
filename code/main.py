@@ -234,7 +234,10 @@ if __name__ == '__main__':
 	pygame.init()
 	screen_width = 600
 	screen_height = 600
-	screen = pygame.display.set_mode((screen_width,screen_height))
+	screen = pygame.Surface((screen_width,screen_height))
+	display_width = 1280
+	display_height = 720
+	display = pygame.display.set_mode((display_width,display_height),pygame.NOFRAME)
 	clock = pygame.time.Clock()
 	pygame.mouse.set_visible(False)
 	game = Game()
@@ -276,6 +279,10 @@ if __name__ == '__main__':
 			game.run()
 
 		crt.draw()
-			
+
+		scaled_screen = pygame.transform.scale(screen,(720,720))
+		display.fill((200,255,255))
+		display.blit(scaled_screen,(280,0))
+
 		pygame.display.flip()
 		clock.tick(60)
