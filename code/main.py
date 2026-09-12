@@ -39,7 +39,6 @@ class Game:
 		# Audio
 		self.music = pygame.mixer.Sound('../audio/music.wav')
 		self.music.set_volume(0.2)
-		self.music.play(loops = -1)
 		self.laser_sound = pygame.mixer.Sound('../audio/laser.wav')
 		self.laser_sound.set_volume(0.1)
 		self.explosion_sound = pygame.mixer.Sound('../audio/explosion.wav')
@@ -49,6 +48,7 @@ class Game:
 		# UI setup
 		self.paused = False
 		self.game_over = False
+		self.intro = True
 
 	def create_obstacle(self, x_start, y_start,offset_x):
 		for row_index, row in enumerate(self.shape):
@@ -193,6 +193,19 @@ class Game:
 		quit_rect = quit_surf.get_rect(center = (screen_width/2,screen_height/2 + 90))
 		screen.blit(quit_surf,quit_rect)
 
+	def intro_screen(self):
+		title_surf = self.font.render("SPACE INVADERS",False,"white")
+		title_rect = title_surf.get_rect(center = (screen_width/2,screen_height/2 -80))
+		screen.blit(title_surf,title_rect)
+
+		start_surf = self.font.render("Press S to start",False,"white")
+		start_rect = start_surf.get_rect(center = (screen_width/2,screen_height/2 +80))
+		screen.blit(start_surf,start_rect)
+
+		copyright_surf = self.font.render("2026",False,"white")
+		copyright_rect = copyright_surf.get_rect(center = (screen_width/2,screen_height/2 +260))
+		screen.blit(copyright_surf,copyright_rect)
+
 	def run(self):
 		self.player.update()
 		self.alien_lasers.update()
@@ -256,7 +269,7 @@ if __name__ == '__main__':
 				pygame.quit()
 				sys.exit()
 
-			if event.type == ALIENLASER and not game.paused and not game.game_over:
+			if event.type == ALIENLASER and not game.intro and not game.paused and not game.game_over:
 				game.alien_shoot()
 
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -269,9 +282,16 @@ if __name__ == '__main__':
 					game.paused = True
 					game.music.stop()
 
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+				if game.intro:
+					game.intro = False
+					game.music.play(loops = -1)
+
 		screen.fill((30,30,30))
 
-		if game.game_over:
+		if game.intro:
+			game.intro_screen()
+		elif game.game_over:
 			game.game_over_menu()
 		elif game.paused:
 			game.pause_menu()
