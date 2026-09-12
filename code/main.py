@@ -78,10 +78,10 @@ class Game:
 		all_aliens = self.aliens.sprites()
 		for alien in all_aliens:
 			if alien.rect.right >= screen_width:
-				self.alien_direction = -1
+				self.alien_direction = -3
 				self.alien_move_down(2)
 			elif alien.rect.left <= 0:
-				self.alien_direction = 1
+				self.alien_direction = 3
 				self.alien_move_down(2)
 
 	def alien_move_down(self,distance):
@@ -168,7 +168,7 @@ class Game:
 			screen.blit(victory_surf,victory_rect)
 
 	def pause_menu(self):
-		pause_surf = self.font.render("PAUSED", False,"white")
+		pause_surf = self.font.render("PAUSED",False,"white")
 		pause_rect = pause_surf.get_rect(center = (screen_width/2,screen_height/2 - 30))
 		screen.blit(pause_surf,pause_rect)
 
@@ -228,17 +228,9 @@ class CRT:
 		self.tv = pygame.image.load('../graphics/tv.png').convert_alpha()
 		self.tv = pygame.transform.scale(self.tv,(screen_width,screen_height))
 
-	def create_crt_lines(self):
-		line_height = 3
-		line_amount = int(screen_height / line_height)
-		for line in range(line_amount):
-			y_pos = line * line_height
-			pygame.draw.line(self.tv,'black',(0,y_pos),(screen_width,y_pos),1)
-
 	def draw(self):
 		alpha = randint(75,90)
 		self.tv.set_alpha(alpha)
-		self.create_crt_lines()
 		screen.blit(self.tv,(0,0))
 		return alpha
 
@@ -257,7 +249,7 @@ if __name__ == '__main__':
 	crt = CRT()
 
 	ALIENLASER = pygame.USEREVENT + 1
-	pygame.time.set_timer(ALIENLASER,800)
+	pygame.time.set_timer(ALIENLASER,500)
 
 	while True:
 		for event in pygame.event.get():
@@ -310,8 +302,7 @@ if __name__ == '__main__':
 
 		line_height = 3
 		for y in range(0, display_height, line_height):
-			pygame.draw.line(overlay, (0,0,0,alpha), (0,y), (280,y), 1)
-			pygame.draw.line(overlay, (0,0,0,alpha), (1000,y), (display_width,y), 1)
+			pygame.draw.line(overlay, (0,0,0,alpha), (0,y), (display_width,y), 1)
 
 		display.blit(overlay,(0,0))
 
