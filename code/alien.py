@@ -11,8 +11,8 @@ class Alien(pygame.sprite.Sprite):
 		elif color == 'green': self.value = 200
 		else: self.value = 300
 
-	def update(self,direction):
-		self.rect.x += direction
+	def update(self,direction,speed):
+		self.rect.x += direction * speed
 
 class Extra(pygame.sprite.Sprite):
 	def __init__(self,side,screen_width):

@@ -31,6 +31,9 @@ class Game:
 		self.alien_lasers = pygame.sprite.Group()
 		self.alien_setup(rows = 6, cols = 8)
 		self.alien_direction = 1
+		self.alien_speed = 1
+		self.level = 1
+		self.alien_laser_timer = 800
 
 		# Extra setup
 		self.extra = pygame.sprite.GroupSingle()
@@ -78,10 +81,10 @@ class Game:
 		all_aliens = self.aliens.sprites()
 		for alien in all_aliens:
 			if alien.rect.right >= screen_width:
-				self.alien_direction = -3
+				self.alien_direction = -1
 				self.alien_move_down(2)
 			elif alien.rect.left <= 0:
-				self.alien_direction = 3
+				self.alien_direction = 1
 				self.alien_move_down(2)
 
 	def alien_move_down(self,distance):
@@ -203,15 +206,35 @@ class Game:
 		start_rect = start_surf.get_rect(center = (screen_width/2,screen_height/2 +260))
 		screen.blit(start_surf,start_rect)
 
+	def level_up(self):
+		self.level += 1
+
+		if self.level == 2:
+			self.alien_speed = 2
+			self.alien_laser_timer = 700
+
+		elif self.level == 3:
+			self.alien_speed = 3
+			self.alien_laser_timer = 600
+
+		elif self.level == 4:
+			self.alien_speed = 3
+			self.alien_laser_timer = 500
+
+		self.alien_setup(rows=6, cols=8)
+		pygame.time.set_timer(ALIENLASER, self.alien_laser_timer)
+
 	def run(self):
 		self.player.update()
 		self.alien_lasers.update()
 		self.extra.update()
 		
-		self.aliens.update(self.alien_direction)
+		self.aliens.update(self.alien_direction,self.alien_speed)
 		self.alien_position_checker()
 		self.extra_alien_timer()
 		self.collision_checks()
+		if not self.aliens and self.level < 4:
+			self.level_up()
 		
 		self.player.sprite.lasers.draw(screen)
 		self.player.draw(screen)
@@ -249,7 +272,7 @@ if __name__ == '__main__':
 	crt = CRT()
 
 	ALIENLASER = pygame.USEREVENT + 1
-	pygame.time.set_timer(ALIENLASER,500)
+	pygame.time.set_timer(ALIENLASER,game.alien_laser_timer)
 
 	while True:
 		for event in pygame.event.get():
