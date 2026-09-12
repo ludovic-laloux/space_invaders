@@ -194,17 +194,14 @@ class Game:
 		screen.blit(quit_surf,quit_rect)
 
 	def intro_screen(self):
-		title_surf = self.font.render("SPACE INVADERS",False,"white")
-		title_rect = title_surf.get_rect(center = (screen_width/2,screen_height/2 -80))
-		screen.blit(title_surf,title_rect)
+		logo_surf = pygame.image.load("../graphics/logo.jpg").convert_alpha()
+		logo_surf = pygame.transform.scale(logo_surf,(screen_width,screen_height))
+		logo_rect = logo_surf.get_rect(center = (screen_width/2,screen_height/2))
+		screen.blit(logo_surf,logo_rect)
 
-		start_surf = self.font.render("Press S to start",False,"white")
-		start_rect = start_surf.get_rect(center = (screen_width/2,screen_height/2 +80))
+		start_surf = self.font.render("PRESS S TO START",False,"white")
+		start_rect = start_surf.get_rect(center = (screen_width/2,screen_height/2 +260))
 		screen.blit(start_surf,start_rect)
-
-		copyright_surf = self.font.render("2026",False,"white")
-		copyright_rect = copyright_surf.get_rect(center = (screen_width/2,screen_height/2 +260))
-		screen.blit(copyright_surf,copyright_rect)
 
 	def run(self):
 		self.player.update()
@@ -275,12 +272,14 @@ if __name__ == '__main__':
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
 				if game.game_over:
 					game = Game()
-				elif game.paused:
-					game.paused = False
-					game.music.play()
-				else:
-					game.paused = True
-					game.music.stop()
+
+				elif not game.intro:
+					game.paused = not game.paused
+
+					if game.paused:
+						game.music.stop()
+					else:
+						game.music.play(loops = -1)
 
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
 				if game.intro:
@@ -301,7 +300,7 @@ if __name__ == '__main__':
 		crt.draw()
 
 		scaled_screen = pygame.transform.scale(screen,(720,720))
-		display.fill((200,255,255))
+		display.fill((57, 255, 143))
 		display.blit(scaled_screen,(280,0))
 
 		pygame.display.flip()
