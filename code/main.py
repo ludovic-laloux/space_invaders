@@ -259,16 +259,24 @@ class CRT:
 
 if __name__ == '__main__':
 	pygame.init()
+
 	screen_width = 600
 	screen_height = 600
-	screen = pygame.Surface((screen_width,screen_height))
-	display_width = 1280
-	display_height = 720
-	display = pygame.display.set_mode((display_width,display_height),pygame.NOFRAME)
-	overlay = pygame.Surface((1280,720),pygame.SRCALPHA)
+
+	screen = pygame.Surface((screen_width, screen_height))
+
+	display_width, display_height = pygame.display.get_desktop_sizes()[0]
+
+	display = pygame.display.set_mode((display_width, display_height),pygame.NOFRAME)
+
+	overlay = pygame.Surface((display_width, display_height),pygame.SRCALPHA)
+
 	clock = pygame.time.Clock()
+
 	pygame.mouse.set_visible(False)
+
 	game = Game()
+
 	crt = CRT()
 
 	ALIENLASER = pygame.USEREVENT + 1
@@ -317,17 +325,30 @@ if __name__ == '__main__':
 
 		alpha = crt.draw()
 
-		scaled_screen = pygame.transform.scale(screen,(720,720))
-		display.fill((57, 255, 143))
-		display.blit(scaled_screen,(280,0))
+		# Scaling, rendering section
+		game_size = min(display_width, display_height)
 
+		scaled_screen = pygame.transform.scale(
+			screen,
+			(game_size, game_size)
+		)
+
+		display.fill((57, 255, 143))
+
+		x = (display_width - game_size) // 2
+		y = (display_height - game_size) // 2
+
+		display.blit(scaled_screen, (x, y))
+
+		# CRT lines
 		overlay.fill((0, 0, 0, 0))
 
 		line_height = 3
-		for y in range(0, display_height, line_height):
-			pygame.draw.line(overlay, (0,0,0,alpha), (0,y), (display_width,y), 1)
+		for scan_y in range(0, display_height, line_height):
+			pygame.draw.line(overlay, (0,0,0,alpha), (0,scan_y), (display_width,scan_y), 1)
 
 		display.blit(overlay,(0,0))
 
+		# Display update, frame-rate control
 		pygame.display.flip()
 		clock.tick(60)
