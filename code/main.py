@@ -251,15 +251,30 @@ class Game:
 		self.victory_message()
 
 class CRT:
-	def __init__(self):
-		self.tv = pygame.image.load('../graphics/tv.png').convert_alpha()
-		self.tv = pygame.transform.scale(self.tv,(screen_width,screen_height))
+    def __init__(self):
+        self.tv = pygame.image.load('../graphics/tv.png').convert_alpha()
+        self.tv = pygame.transform.scale(self.tv,(screen_width,screen_height))
 
-	def draw(self):
-		alpha = randint(75,90)
-		self.tv.set_alpha(alpha)
-		screen.blit(self.tv,(0,0))
-		return alpha
+    def draw(self):
+        self.alpha = randint(75, 90)
+        self.tv.set_alpha(self.alpha)
+        screen.blit(self.tv, (0, 0))
+
+    def draw_scanlines(self):
+        overlay.fill((0, 0, 0, 0))
+
+        line_height = 3
+        for scan_y in range(0, display_height, line_height):
+            pygame.draw.line(
+                overlay,
+                (0, 0, 0, self.alpha),
+                (0, scan_y),
+                (display_width, scan_y),
+                1
+            )
+
+        display.blit(overlay, (0, 0))
+
 
 if __name__ == '__main__':
 	pygame.init()
@@ -330,6 +345,9 @@ if __name__ == '__main__':
 		else: 
 			game.run()
 
+		# CRT texture on the logical screen
+		crt.draw()
+
 		# Scaling, rendering section
 		game_size = min(display_width, display_height)
 
@@ -345,17 +363,8 @@ if __name__ == '__main__':
 
 		display.blit(scaled_screen, (x, y))
 
-		# CRT effect
-
-		alpha = crt.draw()
-
-		overlay.fill((0, 0, 0, 0))
-
-		line_height = 3
-		for scan_y in range(0, display_height, line_height):
-			pygame.draw.line(overlay, (0,0,0,alpha), (0,scan_y), (display_width,scan_y), 1)
-
-		display.blit(overlay,(0,0))
+		# CRT scanlines on the physical display
+		crt.draw_scanlines()
 
 		# Display update, frame-rate control
 		pygame.display.flip()
