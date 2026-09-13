@@ -287,6 +287,7 @@ if __name__ == '__main__':
 	pygame.time.set_timer(ALIENLASER,game.alien_laser_timer)
 
 	while True:
+		# Event loop
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				pygame.quit()
@@ -316,8 +317,10 @@ if __name__ == '__main__':
 					game.music.play(loops=-1)
 					pygame.time.set_timer(ALIENLASER, game.alien_laser_timer)
 
+		# Clear screen
 		screen.fill((30,30,30))
 
+		# Display current game state
 		if game.intro:
 			game.intro_screen()
 		elif game.game_over:
@@ -326,8 +329,6 @@ if __name__ == '__main__':
 			game.pause_menu()
 		else: 
 			game.run()
-
-		alpha = crt.draw()
 
 		# Scaling, rendering section
 		game_size = min(display_width, display_height)
@@ -344,7 +345,10 @@ if __name__ == '__main__':
 
 		display.blit(scaled_screen, (x, y))
 
-		# CRT lines
+		# CRT effect
+
+		alpha = crt.draw()
+
 		overlay.fill((0, 0, 0, 0))
 
 		line_height = 3
