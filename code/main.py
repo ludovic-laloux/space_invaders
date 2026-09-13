@@ -142,7 +142,7 @@ class Game:
 					self.lives -= 1
 					if self.lives <= 0:
 						self.game_over = True
-						game.music.stop()
+						self.music.stop()
 
 		# aliens
 		if self.aliens:
@@ -179,8 +179,12 @@ class Game:
 		resume_rect = resume_surf.get_rect(center = (screen_width/2,screen_height/2 + 30))
 		screen.blit(resume_surf,resume_rect)
 
+		restart_surf = self.font.render("Press R to restart",False,"white")
+		restart_rect = restart_surf.get_rect(center = (screen_width/2,screen_height/2 + 90))
+		screen.blit(restart_surf,restart_rect)
+
 		quit_surf = self.font.render("Press Esc to quit",False,"white")
-		quit_rect = quit_surf.get_rect(center = (screen_width/2,screen_height/2 + 90))
+		quit_rect = quit_surf.get_rect(center = (screen_width/2,screen_height/2 + 150))
 		screen.blit(quit_surf,quit_rect)
 
 	def game_over_menu(self):
@@ -188,7 +192,7 @@ class Game:
 		game_over_rect = game_over_surf.get_rect(center = (screen_width/2,screen_height/2 - 30))
 		screen.blit(game_over_surf,game_over_rect)
 
-		restart_surf = self.font.render("Press Enter to restart",False,"white")
+		restart_surf = self.font.render("Press R to restart",False,"white")
 		restart_rect = restart_surf.get_rect(center = (screen_width/2,screen_height/2 + 30))
 		screen.blit(restart_surf,restart_rect)
 
@@ -296,21 +300,21 @@ if __name__ == '__main__':
 				game.alien_shoot()
 
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-				if game.game_over:
-					game = Game()
-
-				elif not game.intro:
+				if not game.intro and not game.game_over:
 					game.paused = not game.paused
-
-					if game.paused:
-						game.music.stop()
-					else:
-						game.music.play(loops = -1)
+					game.music.stop()
 
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
 				if game.intro:
 					game.intro = False
-					game.music.play(loops = -1)
+					game.music.play(loops=-1)
+
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+				if game.paused or game.game_over:
+					game = Game()
+					game.intro = False
+					game.music.play(loops=-1)
+					pygame.time.set_timer(ALIENLASER, game.alien_laser_timer)
 
 		screen.fill((30,30,30))
 
