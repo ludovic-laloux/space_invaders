@@ -106,7 +106,6 @@ class Game:
 			self.extra_spawn_time = randint(400,800)
 
 	def collision_checks(self):
-
 		# player lasers 
 		if self.player.sprite.lasers:
 			for laser in self.player.sprite.lasers:
@@ -150,8 +149,8 @@ class Game:
 				pygame.sprite.spritecollide(alien,self.blocks,True)
 
 				if pygame.sprite.spritecollide(alien,self.player,False):
-					pygame.quit()
-					sys.exit()
+					self.game_over = True
+					self.music.stop()
 	
 	def display_lives(self):
 		for live in range(self.lives - 1):
@@ -201,7 +200,7 @@ class Game:
 		screen.blit(quit_surf,quit_rect)
 
 	def intro_screen(self):
-		logo_surf = pygame.image.load("../graphics/logo.jpg").convert_alpha()
+		logo_surf = pygame.image.load("../graphics/logo.jpg").convert()
 		logo_surf = pygame.transform.scale(logo_surf,(screen_width,screen_height))
 		logo_rect = logo_surf.get_rect(center = (screen_width/2,screen_height/2))
 		screen.blit(logo_surf,logo_rect)
