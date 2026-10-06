@@ -34,7 +34,7 @@ class Game:
 		self.alien_speed = 1
 		self.level = 1
 		self.level_message_timer = 120
-		self.alien_laser_timer = 1200
+		self.alien_laser_timer = 1400
 
 		# Extra setup
 		self.extra = pygame.sprite.GroupSingle()
@@ -218,20 +218,17 @@ class Game:
 		screen.blit(level_surf,level_rect)
 
 	def level_up(self):
-		self.level += 1
-		self.level_message_timer = 120
+		if self.level < 3:
+			self.level += 1
+			self.level_message_timer = 120
 
-		if self.level == 2:
-			self.alien_speed = 1
-			self.alien_laser_timer = 1000
+			if self.level == 2:
+				self.alien_speed = 2
+				self.alien_laser_timer = 1300
 
-		elif self.level == 3:
-			self.alien_speed = 1
-			self.alien_laser_timer = 800
-
-		elif self.level == 4:
-			self.alien_speed = 1
-			self.alien_laser_timer = 600
+			elif self.level == 3:
+				self.alien_speed = 3
+				self.alien_laser_timer = 1200
 
 		self.alien_setup(rows=6, cols=8)
 		pygame.time.set_timer(ALIENLASER, self.alien_laser_timer)
@@ -245,7 +242,7 @@ class Game:
 		self.alien_position_checker()
 		self.extra_alien_timer()
 		self.collision_checks()
-		if not self.aliens and self.level < 4:
+		if not self.aliens and self.level < 3:
 			self.level_up()
 		
 		self.player.sprite.lasers.draw(screen)
