@@ -33,7 +33,8 @@ class Game:
 		self.alien_direction = 1
 		self.alien_speed = 1
 		self.level = 1
-		self.alien_laser_timer = 800
+		self.level_message_timer = 120
+		self.alien_laser_timer = 1200
 
 		# Extra setup
 		self.extra = pygame.sprite.GroupSingle()
@@ -209,20 +210,28 @@ class Game:
 		start_rect = start_surf.get_rect(center = (screen_width/2,screen_height/2 +260))
 		screen.blit(start_surf,start_rect)
 
+	def level_message(self):
+		level_font = pygame.font.Font("../font/pixeled.ttf",50)
+		level_surf = level_font.render(f"Level {self.level}",False,(255,255,255))
+		level_surf.set_alpha(170)
+		level_rect = level_surf.get_rect(center = (screen_width / 2, screen_height / 2))
+		screen.blit(level_surf,level_rect)
+
 	def level_up(self):
 		self.level += 1
+		self.level_message_timer = 120
 
 		if self.level == 2:
-			self.alien_speed = 2
-			self.alien_laser_timer = 700
+			self.alien_speed = 1
+			self.alien_laser_timer = 1000
 
 		elif self.level == 3:
-			self.alien_speed = 3
-			self.alien_laser_timer = 600
+			self.alien_speed = 1
+			self.alien_laser_timer = 800
 
 		elif self.level == 4:
-			self.alien_speed = 3
-			self.alien_laser_timer = 500
+			self.alien_speed = 1
+			self.alien_laser_timer = 600
 
 		self.alien_setup(rows=6, cols=8)
 		pygame.time.set_timer(ALIENLASER, self.alien_laser_timer)
@@ -248,6 +257,10 @@ class Game:
 		self.display_lives()
 		self.display_score()
 		self.victory_message()
+
+		if self.level_message_timer > 0:
+			self.level_message()
+			self.level_message_timer -= 1
 
 class CRT:
     def __init__(self):
