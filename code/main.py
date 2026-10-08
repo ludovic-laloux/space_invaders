@@ -326,7 +326,10 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 if not game.intro and not game.game_over:
                     game.paused = not game.paused
-                    game.music.stop()
+                    if game.paused:
+                        game.music.stop()
+                    if not game.paused:
+                        game.music.play(loops=-1)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 if game.intro:
